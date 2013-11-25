@@ -30,13 +30,13 @@
 
     <!-- canvg used to overcome <img src=SVG> toDataURL security issues -->
     <!-- see code.google.com/p/chromium/issues/detail?id=54204 -->
-    <script src="lib/canvg/rgbcolor.js"></script> 
+    <script src="lib/canvg/rgbcolor.js"></script>
     <script src="lib/canvg/canvg.js"></script>
 
     <!-- prereq. for asset studio lib -->
     <!-- <link rel="stylesheet" href="lib/colorpicker/css/colorpicker.css"> -->
     <!-- <script src="lib/colorpicker/js/colorpicker.js"></script> -->
-    
+
     <link rel="stylesheet" href="lib/spectrum/spectrum-assetstudio.css">
     <script src="lib/spectrum/spectrum.js"></script>
 
@@ -60,28 +60,28 @@
       	  </p>
       	</div>
         <p id="page-intro">
-          The <strong>Android Action Bar Style Generator</strong> allows you to easily create a simple, 
+          The <strong>Android Action Bar Style Generator</strong> allows you to easily create a simple,
           attractive and seamless custom action bar style for your Android application. It will generate
-          all necessary nine patch assets plus associated XML drawables and styles which you can copy straight 
+          all necessary nine patch assets plus associated XML drawables and styles which you can copy straight
           into your project.
         </p>
         <br />
         <p>
           This is currently a beta product. Please <a href="https://github.com/jgilfelt/android-actionbarstylegenerator/issues">report bugs</a>.
         </p>
-        
+
       </div>
-      
+
       <div id="inputs">
         <div id="inputs-form"></div>
         <div id="preview"></div>
         <br style="clear:both" />
       </div>
-     
+
       <div id="outputs">
         <h3>
           Output resources
-          <div id="zip-button-stub"></div>         
+          <div id="zip-button-stub"></div>
         </h3>
       </div>
       <div id="footer">
@@ -94,16 +94,16 @@
 
     <script>
       $(studio.checkBrowser);
-      
+
       function toTitleCase(str) {
         return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
       }
-     
+
       var zipper = studio.zip.createDownloadifyZipButton($('#zip-button-stub'));
 
       // Load image resources (stencils)
       var resList = {};
-      
+
       var shapes = {
       	    'ab_solid':1,
       	    'ab_transparent':1,
@@ -112,10 +112,10 @@
         	'ab_texture_tile':1,
         	'menu_dropdown_panel':1,
         	//'menu_hardkey_panel':1,
-        	'tab_unselected':1, 
+        	'tab_unselected':1,
         	'tab_unselected_pressed':1,
         	'tab_unselected_focused':1,
-        	'tab_selected':1, 
+        	'tab_selected':1,
         	'tab_selected_pressed':1,
         	'tab_selected_focused':1,
         	'spinner_ab_focused':1,
@@ -128,14 +128,14 @@
         	'cab_background_top':1,
         	'cab_background_bottom':1
        };
-       
+
        var nonStyledShapes = {
        	    'spinner_ab_default':1,
        	    'spinner_ab_disabled':1,
        	    'progress_bg':1,
        	    'btn_cab_done_default':1
        }
-       
+
        var xmlTemplates = {
        	    'styles':1,
        	    'styles-sherlock':1,
@@ -152,12 +152,12 @@
        	    'btn_cab_done':1,
        	    'ab_background_textured':1
        }
-      
+
        // Create image output slots
       var group = studio.ui.createImageOutputGroup({
         container: $('#outputs')
       });
-      
+
       for (var density in {'xhdpi':1})
         for (var backgroundShape in shapes)
         studio.ui.createImageOutputSlot({
@@ -165,30 +165,30 @@
           id: 'out-icon-' + backgroundShape, //density,
           label: backgroundShape //(density == 'web') ? 'web, hi-res' : density
         });
-        
-      // preview 
+
+      // preview
       var prev = studio.ui.createImageOutputGroup({
         container: $('#preview')
-      }); 
+      });
       studio.ui.createImageOutputSlot({
         container: prev,
-        id: 'out-icon-' + 'preview', 
+        id: 'out-icon-' + 'preview',
         label: ''
       });
-      
+
       for (var density in {'xhdpi':1, 'hdpi':1, 'mdpi':1})
         for (var backgroundShape in shapes)
           for (var type in {'back':1, 'fore1':1, 'mask':1})
             resList[backgroundShape + '-' + density + '-' + type] = (
               'res/actionbar-stencil/' + backgroundShape + '/' + density + '/' + type + '.png');
-      
+
       // cab assets need 2nd mask
       for (var density in {'xhdpi':1, 'hdpi':1, 'mdpi':1})
         for (var backgroundShape in {'cab_background_top':1, 'cab_background_bottom':1, 'tab_selected_focused':1, 'tab_selected_pressed':1, 'tab_unselected_focused':1, 'tab_unselected_pressed':1})
           resList[backgroundShape + '-' + density + '-' + 'mask1'] = (
             'res/actionbar-stencil/' + backgroundShape + '/' + density + '/' + 'mask1' + '.png');
-       
-      // tab hairline      
+
+      // tab hairline
       for (var density in {'xhdpi':1, 'hdpi':1, 'mdpi':1})
         for (var backgroundShape in {'tab_unselected_focused':1, 'tab_unselected_pressed':1}) {
           resList[backgroundShape + '-' + density + '-' + 'mask_old'] = (
@@ -208,9 +208,9 @@
       for (var template in xmlTemplates)
         xmlList[template] = (
           'res/actionbar-xml-templates/' + template + '.xml');
-      
+
       var previewList = {};
-      
+
       for (var theme in {'light':1, 'dark':1}) {
         for (var type in {'solid':1, 'transparent':1}) {
           previewList['back' + '-' + theme + '-' + type] = (
@@ -233,30 +233,30 @@
               'res/actionbar-preview/' + theme + '-' + type + '/' + 'mask_ab_main_textured.png');
         }
       }
-          
+
 	  var XML_RESOURCES = {};
 	  var IMAGE_RESOURCES = {};
 	  var PREVIEW_RESOURCES = {};
-	  
+
       imagelib.loadImageResources(resList, function(r) {
         IMAGE_RESOURCES = r;
         IMAGE_RESOURCES._loaded = true;
-        
+
         studio.hash.bindFormToDocumentHash(form);
-        
+
         imagelib.loadXmlTemplates(xmlList, function(r2) {
           XML_RESOURCES = r2;
           XML_RESOURCES._loaded = true;
           //regenerate();
-          
+
           imagelib.loadImageResources(previewList, function(r3) {
           	PREVIEW_RESOURCES = r3;
           	PREVIEW_RESOURCES._loaded = true;
           	regenerate();
           });
-          
+
         });
-        
+
       });
 
 /*
@@ -280,7 +280,7 @@
         'xhdpi-tab_unselected': { w:  6, h:  10 },
          'hdpi-tab_unselected': { w:  5, h:  8 },
          'mdpi-tab_unselected': { w:  4, h:  6 },
-         
+
         'xhdpi-tab_selected_pressed': { w:  6, h:  18 },
          'hdpi-tab_selected_pressed': { w:  5, h:  14 },
          'mdpi-tab_selected_pressed': { w:  4, h:  10 },
@@ -292,93 +292,93 @@
         'xhdpi-tab_selected': { w:  6, h:  18 },
          'hdpi-tab_selected': { w:  5, h:  14 },
          'mdpi-tab_selected': { w:  4, h:  10 },
-         
+
         'xhdpi-ab_solid': { w:  50, h:  50 },
          'hdpi-ab_solid': { w:  38, h:  38 },
          'mdpi-ab_solid': { w:  26, h:  26 },
-         
+
         'xhdpi-ab_transparent': { w:  50, h:  50 },
          'hdpi-ab_transparent': { w:  38, h:  38 },
-         'mdpi-ab_transparent': { w:  26, h:  26 }, 
-         
+         'mdpi-ab_transparent': { w:  26, h:  26 },
+
         'xhdpi-ab_solid': { w:  50, h:  50 },
          'hdpi-ab_solid': { w:  38, h:  38 },
          'mdpi-ab_solid': { w:  26, h:  26 },
-         
+
         'xhdpi-ab_stacked_solid': { w:  50, h:  50 },
          'hdpi-ab_stacked_solid': { w:  38, h:  38 },
          'mdpi-ab_stacked_solid': { w:  26, h:  26 },
-         
+
         'xhdpi-ab_bottom_solid': { w:  50, h:  50 },
          'hdpi-ab_bottom_solid': { w:  38, h:  38 },
          'mdpi-ab_bottom_solid': { w:  26, h:  26 },
-         
+
         'xhdpi-menu_dropdown_panel': { w:  130, h:  66 },
          'hdpi-menu_dropdown_panel': { w:  98, h:  50 },
          'mdpi-menu_dropdown_panel': { w:  66, h:  34 },
-/*         
+/*
         'xhdpi-menu_hardkey_panel': { w:  130, h:  50 },
          'hdpi-menu_hardkey_panel': { w:  98, h:  38 },
          'mdpi-menu_hardkey_panel': { w:  66, h:  26 },
-*/         
+*/
         'xhdpi-spinner_ab_focused': { w:  46, h:  66 },
          'hdpi-spinner_ab_focused': { w:  35, h:  50 },
          'mdpi-spinner_ab_focused': { w:  24, h:  34 },
-         
+
         'xhdpi-spinner_ab_pressed': { w:  46, h:  66 },
          'hdpi-spinner_ab_pressed': { w:  35, h:  50 },
          'mdpi-spinner_ab_pressed': { w:  24, h:  34 },
-         
+
         'xhdpi-spinner_ab_default': { w:  46, h:  66 },
          'hdpi-spinner_ab_default': { w:  35, h:  50 },
          'mdpi-spinner_ab_default': { w:  24, h:  34 },
-         
+
         'xhdpi-spinner_ab_disabled': { w:  46, h:  66 },
          'hdpi-spinner_ab_disabled': { w:  35, h:  50 },
          'mdpi-spinner_ab_disabled': { w:  24, h:  34 },
-         
+
         'xhdpi-list_focused': { w:  14, h:  14 },
          'hdpi-list_focused': { w:  11, h:  11 },
          'mdpi-list_focused': { w:  8, h:  8 },
-         
+
         'xhdpi-progress_primary': { w:  46, h:  34 },
          'hdpi-progress_primary': { w:  35, h:  26 },
-         'mdpi-progress_primary': { w:  24, h:  18 }, 
-         
+         'mdpi-progress_primary': { w:  24, h:  18 },
+
         'xhdpi-progress_secondary': { w:  10, h:  34 },
          'hdpi-progress_secondary': { w:  8, h:  26 },
-         'mdpi-progress_secondary': { w:  6, h:  18 }, 
-         
+         'mdpi-progress_secondary': { w:  6, h:  18 },
+
         'xhdpi-progress_bg': { w:  10, h:  34 },
          'hdpi-progress_bg': { w:  8, h:  26 },
-         'mdpi-progress_bg': { w:  6, h:  18 }, 
-         
+         'mdpi-progress_bg': { w:  6, h:  18 },
+
         'xhdpi-btn_cab_done_default': { w:  5, h:  56 },
          'hdpi-btn_cab_done_default': { w:  4, h:  44 },
          'mdpi-btn_cab_done_default': { w:  4, h:  32 },
-         
+
         'xhdpi-btn_cab_done_focused': { w:  5, h:  56 },
          'hdpi-btn_cab_done_focused': { w:  4, h:  44 },
          'mdpi-btn_cab_done_focused': { w:  4, h:  32 },
-         
+
         'xhdpi-btn_cab_done_pressed': { w:  5, h:  56 },
          'hdpi-btn_cab_done_pressed': { w:  4, h:  44 },
          'mdpi-btn_cab_done_pressed': { w:  4, h:  32 },
-         
+
         'xhdpi-cab_background_top': { w:  50, h:  50 },
          'hdpi-cab_background_top': { w:  38, h:  38 },
          'mdpi-cab_background_top': { w:  26, h:  26 },
-         
+
         'xhdpi-cab_background_bottom': { w:  50, h:  50 },
          'hdpi-cab_background_bottom': { w:  38, h:  38 },
          'mdpi-cab_background_bottom': { w:  26, h:  26 },
-         
+
         'xhdpi-ab_texture_tile': { w:  8, h:  8 },
          'hdpi-ab_texture_tile': { w:  6, h:  6 },
          'mdpi-ab_texture_tile': { w:  6, h:  6 },
-         
+
       };
-      
+
       var DEFAULT_COLORS_LIGHT = {
       	'backColor':'#E4E4E4',
       	'secondaryColor':'#D6D6D6',
@@ -389,7 +389,7 @@
       	'cabHighlightColor':'33B5E5',
       	'tabColor':'#33B5E5'
       }
-      
+
       var DEFAULT_COLORS_DARK = {
       	'backColor':'#2D2D2D',
       	'secondaryColor':'#151515',
@@ -400,7 +400,7 @@
       	'cabHighlightColor':'33B5E5',
       	'tabColor':'#33B5E5'
       }
-      
+
       var DEFAULT_COLORS_INVERSE = {
       	'backColor':'#2D2D2D',
       	'secondaryColor':'#555555',
@@ -411,9 +411,9 @@
       	'cabHighlightColor':'33B5E5',
       	'tabColor':'#33B5E5'
       }
-      
-      
-      
+
+
+
       function setDefaultColorPalette(theme) {
       	if (theme == 'light') {
       		form.setValuesSerialized(DEFAULT_COLORS_LIGHT);
@@ -423,12 +423,12 @@
       		form.setValuesSerialized(DEFAULT_COLORS_INVERSE);
       	}
       }
-   
-      var INVERSE_THEME_ATTRS = 
+
+      var INVERSE_THEME_ATTRS =
 '        <!-- Light.DarkActionBar specific -->\n'+
-'        <item name="android:actionBarWidgetTheme">@style/Theme.##stylep##.Widget</item>\n';   
-      
-      var INVERSE_THEME_ATTRS_SHERLOCK = 
+'        <item name="android:actionBarWidgetTheme">@style/Theme.##stylep##.Widget</item>\n';
+
+      var INVERSE_THEME_ATTRS_SHERLOCK =
 '        <!-- Light.DarkActionBar specific -->\n'+
 '        <item name="actionBarWidgetTheme">@style/Theme.##stylep##.Widget</item>\n';
 
@@ -445,7 +445,7 @@
           }, 1000);
           return;
         }
-        
+
         if (!IMAGE_RESOURCES._loaded || !XML_RESOURCES._loaded)
           return;
 
@@ -456,57 +456,59 @@
         var baseTheme = values['theme'];
         var compat = values['compat'];
         var coreTheme = ((baseTheme == 'light_dark') ? 'dark' : baseTheme);
-        
+
         if (baseThemeSetting == null) {
         	//console.log('theme null');
         	//console.log('baseTheme=' + baseTheme);
         	baseThemeSetting = baseTheme;
         } else if (baseTheme != baseThemeSetting) {
         	// theme changed
-        	
+
         	//console.log('theme changed');
         	//console.log('baseThemeSetting=' + baseThemeSetting);
         	//console.log('baseTheme=' + baseTheme);
         	setDefaultColorPalette(baseTheme);
         	baseThemeSetting = baseTheme;
         }
-        
+
         var styleNameTC = toTitleCase(styleName);
-        
+
         var rx = new RegExp('##stylep##', "g");
         var inverseAttrs = (baseTheme == 'light_dark') ? INVERSE_THEME_ATTRS.replace(rx, styleNameTC) : '';
         var inverseAttrsSherlock = (baseTheme == 'light_dark') ? INVERSE_THEME_ATTRS_SHERLOCK.replace(rx, styleNameTC) : '';
-        
-        var acc = values['accentColor'].color.substring(1);        
+
+        var acc = values['accentColor'].color.substring(1);
         if (acc.length == 3) {
         	acc = acc[0] + acc[0] + acc[1] + acc[1] + acc[2] + acc[2];
-        }	
-        
+        }
+
         var replaceStrings = {
         	'style':(styleName.toLowerCase()),
         	'stylep':(styleNameTC),
         	'base':((baseTheme == 'light') ? '.Light' : ''),
         	'accent':(acc.toUpperCase()),
         	'actionbarstyle':(toTitleCase(values['actionbarstyle'])),
-        	
+
         	'tab_unselected':((values['hairline'] == true) ? '@drawable/tab_unselected_' + styleName.toLowerCase() : '@android:color/transparent'),
         	'solid_ab_bg':((values['texture'] == true) ? 'background_textured' : 'solid'),
         	'solid_ab_bottom_bg':((values['texture'] == true) ? 'background_textured' : 'bottom_solid'),
-        	
+
         	'parent_theme':((baseTheme == 'light_dark') ? '.Light.DarkActionBar' : ((baseTheme == 'light') ? '.Light' : '')),
         	'inverse':((baseTheme == 'light_dark') ? '.Inverse' : ''),
         	'actionbar_base':((baseTheme == 'light_dark') ? '.Light' : ((baseTheme == 'light') ? '.Light' : '')),
         	'inverse_attrs':inverseAttrs,
-        	'inverse_attrs_sherlock':inverseAttrsSherlock
+        	'inverse_attrs_sherlock':inverseAttrsSherlock,
+          'base_theme':((baseTheme == 'light') ? '.LightActionBar' : ''),
+          'primary_colour':values['backColor'].color
         };
-        
+
         zipper.clear();
         zipper.setZipFilename('actionbar_style_' + styleName.toLowerCase() + '.zip');
 
         var continue_ = function(foreCtx) {
           //var backgroundShape = values['backgroundShape'];
           //var backgroundShape = 'tab-unselected-pressed';
-          
+
           // process xml
           for (var template in xmlTemplates) {
           	if (template == 'styles-sherlock') continue;
@@ -534,19 +536,19 @@
           	} else {
           		dir = 'res/drawable/';
           	}
-          	
+
           	var data = XML_RESOURCES[template + suffix];
           	for (var id in replaceStrings) {
           		var regexp = new RegExp('##' + id + '##', "g");
           		data = data.replace(regexp, replaceStrings[id]);
           	}
-          	
+
           	zipper.add({
           	  name: (dir + template + '_' + styleName.toLowerCase() + '.xml'),
               textData: data
             })
           }
-          
+
           // process non-styled assets
           for (var nonStyledShape in nonStyledShapes) {
           	for (var density in {'xhdpi':1, 'hdpi':1, 'mdpi':1}) {
@@ -555,21 +557,21 @@
               var targetRect = { x:  0, y:  0, w:  iconSize.h, h:  iconSize.h };
 
               var outCtx = imagelib.drawing.context(iconSize);
-              
+
               imagelib.drawing.copy(outCtx, IMAGE_RESOURCES[nonStyledShape + '-' + density + '-' + coreTheme], iconSize);
-             
+
               zipper.add({
                 name: ('res/drawable-' + density + '/' + nonStyledShape + '_' + styleName.toLowerCase() + '.9.png'),
                 base64data: outCtx.canvas.toDataURL().match(/;base64,(.+)/)[1]
               });
-              
+
           	}
           }
-          
-          
+
+
           // process styled assets
           for (var backgroundShape in shapes) {
-          
+
           for (var density in {'xhdpi':1, 'hdpi':1, 'mdpi':1}) {
             var mult = studio.util.getMultBaseMdpi(density);
             //if (density == 'web') {
@@ -585,15 +587,15 @@
 
             var outCtx = imagelib.drawing.context(iconSize);
             var tmpCtx = imagelib.drawing.context(iconSize);
-            
+
             var fillColor;
               if ( backgroundShape.match('spinner') ||
-              	backgroundShape.match('transparent') || 
+              	backgroundShape.match('transparent') ||
               	backgroundShape.match('progress') ||
               	backgroundShape.match('list') || backgroundShape.match('cab_done') ) {
               	fillColor = values['accentColor'].color;
               } else if (backgroundShape.match('stacked')) {
-              	fillColor = values['secondaryColor'].color; 
+              	fillColor = values['secondaryColor'].color;
               } else if (backgroundShape.match('menu')) {
               	fillColor = values['tertiaryColor'].color;
               } else if (backgroundShape.match('cab_background')) {
@@ -603,21 +605,21 @@
               } else {
               	fillColor = values['backColor'].color;
               }
-              
-              var altFillColor = (backgroundShape.match('cab_background')) ? values['cabHighlightColor'].color : 
+
+              var altFillColor = (backgroundShape.match('cab_background')) ? values['cabHighlightColor'].color :
                 (backgroundShape.match('tab_selected_') || backgroundShape.match('tab_unselected_')) ? values['accentColor'].color : null;
-              
+
               var maskName = (backgroundShape.match('tab_unselected_') && (values['hairline'] == true)) ? '-mask_old' : '-mask';
-            	
+
               //console.log(backgroundShape + " - " + maskName);
-            
+
               tmpCtx.save();
               tmpCtx.globalCompositeOperation = 'source-over';
               imagelib.drawing.copy(tmpCtx, IMAGE_RESOURCES[backgroundShape + '-' + density + maskName], iconSize);
               tmpCtx.globalCompositeOperation = 'source-atop';
               tmpCtx.fillStyle = fillColor;
               tmpCtx.fillRect(0, 0, iconSize.w, iconSize.h);
-                            
+
               if (foreCtx) {
                 var copyFrom = foreCtx;
                 var foreSize = {
@@ -643,7 +645,7 @@
                   });
               }
               tmpCtx.restore();
-              
+
               // TODO
               var tmpCtxAlt;
               if (altFillColor) {
@@ -666,7 +668,7 @@
               }
               imagelib.drawing.copy(outCtx, IMAGE_RESOURCES[backgroundShape + '-' + density + '-fore' + foreEffect], iconSize);
             //}
-            
+
             var ext = (backgroundShape.match('ab_texture_tile')) ? '.png' : '.9.png';
 
             zipper.add({
@@ -687,9 +689,9 @@
               }(backgroundShape));
             }
           }
-          
+
           } // JG
-          
+
           // ***** PREVIEW ******
 
 			var iconSize = { w: 480, h: 728 };
@@ -701,7 +703,7 @@
 			};
 
 			var outCtx = imagelib.drawing.context(iconSize);
-			
+
 			var tmpCtxAB = imagelib.drawing.context(iconSize);
 			var tmpCtxStacked = imagelib.drawing.context(iconSize);
 			var tmpCtxAccent = imagelib.drawing.context(iconSize);
@@ -709,11 +711,11 @@
 			var tmpCtxTab = imagelib.drawing.context(iconSize);
 
 			var fillColor = values['backColor'].color;
-			
+
 			var abStyle = values['actionbarstyle'];
-			
+
 			var tabKey = (values['hairline'] == true) ? 'mask-tab-hairline' : 'mask-tab';
-			
+
 			tmpCtxAB.save();
 			tmpCtxAB.globalCompositeOperation = 'source-over';
 			imagelib.drawing.copy(tmpCtxAB, PREVIEW_RESOURCES['mask-ab-main' + '-' + coreTheme + '-' + abStyle], iconSize);
@@ -721,9 +723,9 @@
 			tmpCtxAB.fillStyle = fillColor;
 			tmpCtxAB.fillRect(0, 0, iconSize.w, iconSize.h);
 			tmpCtxAB.restore();
-			
+
 			fillColor = values['secondaryColor'].color;
-			
+
 			tmpCtxStacked.save();
 			tmpCtxStacked.globalCompositeOperation = 'source-over';
 			imagelib.drawing.copy(tmpCtxStacked, PREVIEW_RESOURCES['mask-ab-stacked' + '-' + coreTheme + '-' + abStyle], iconSize);
@@ -731,9 +733,9 @@
 			tmpCtxStacked.fillStyle = fillColor;
 			tmpCtxStacked.fillRect(0, 0, iconSize.w, iconSize.h);
 			tmpCtxStacked.restore();
-			
+
 			fillColor = values['accentColor'].color;
-			
+
 			tmpCtxAccent.save();
 			tmpCtxAccent.globalCompositeOperation = 'source-over';
 			imagelib.drawing.copy(tmpCtxAccent, PREVIEW_RESOURCES['mask-accent' + '-' + coreTheme + '-' + abStyle], iconSize);
@@ -741,9 +743,9 @@
 			tmpCtxAccent.fillStyle = fillColor;
 			tmpCtxAccent.fillRect(0, 0, iconSize.w, iconSize.h);
 			tmpCtxAccent.restore();
-			
+
 			fillColor = values['tabColor'].color;
-			
+
 			tmpCtxTab.save();
 			tmpCtxTab.globalCompositeOperation = 'source-over';
 			imagelib.drawing.copy(tmpCtxTab, PREVIEW_RESOURCES[tabKey + '-' + coreTheme + '-' + abStyle], iconSize);
@@ -753,7 +755,7 @@
 			tmpCtxTab.restore();
 
 			fillColor = values['tertiaryColor'].color;
-			
+
 			tmpCtxPopup.save();
 			tmpCtxPopup.globalCompositeOperation = 'source-over';
 			imagelib.drawing.copy(tmpCtxPopup, PREVIEW_RESOURCES['mask-popup' + '-' + coreTheme + '-' + abStyle], iconSize);
@@ -765,11 +767,11 @@
 			var foreEffect = 2;
 			imagelib.drawing.copy(outCtx, PREVIEW_RESOURCES['back' + '-' + ((baseTheme == 'light_dark') ? 'light' : coreTheme) + '-' + abStyle], iconSize);
 			imagelib.drawing.copy(outCtx, tmpCtxAB, iconSize);
-			
+
 			if (values['texture'] == true && abStyle == 'solid') {
 				imagelib.drawing.copy(outCtx, PREVIEW_RESOURCES['mask-ab-main-textured' + '-' + coreTheme + '-' + abStyle], iconSize);
 			}
-			
+
 			imagelib.drawing.copy(outCtx, tmpCtxStacked, iconSize);
 			imagelib.drawing.copy(outCtx, tmpCtxPopup, iconSize);
 			imagelib.drawing.copy(outCtx, tmpCtxTab, iconSize);
@@ -781,9 +783,9 @@
 					$('#out-icon-' + backgroundShape).attr('src', img.src);
 				};
 			}('preview'));
-			
+
           // ***** END PREVIEW ******
-          
+
         };
 
         //if (values['foreground']) {
@@ -798,7 +800,7 @@
           regenerate();
         },
         fields: [
-        
+
           new studio.forms.TextField('name', {
             title: 'Style name',
             helpText: 'Used as name suffix when generating resources. No spaces or punctuation.',
@@ -882,16 +884,16 @@
             helpText: 'Contextual action bar highlight.',
             defaultValue: DEFAULT_COLORS_LIGHT['cabHighlightColor']
           }),
-          
+
         ]
       });
       form.createUI($('#inputs-form').get(0));
-      
+
       var baseThemeSetting = null; //'light';
-      
+
     </script>
-  
+
     <a href="https://github.com/jgilfelt/android-actionbarstylegenerator"><img style="position: absolute; top: 0; right: 0; border: 0;" src="images/ForkMe_Blk.png" alt="Fork me on GitHub" /></a>
-  
+
   </body>
 </html>
