@@ -24,7 +24,7 @@
     </style>
 
     <style name="Theme.##stylep##" parent="Theme.__##stylep##">
-        <<item name="actionBarItemBackground">@drawable/selectable_background_##style##</item>
+        <item name="actionBarItemBackground">@drawable/selectable_background_##style##</item>
         <!--<item name="popupMenuStyle">@style/PopupMenu.##stylep##</item>-->
         <!--<item name="dropDownListViewStyle">@style/DropDownListView.##stylep##</item>-->
         <item name="actionBarTabStyle">@style/ActionBarTabStyle.##stylep##</item>
